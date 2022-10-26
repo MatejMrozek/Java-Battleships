@@ -67,7 +67,7 @@ class Main {
 
         print();
 
-        print("You have destroyed all the battleships!\nIt took you " + attempts + " attempts!");
+        printWin();
     }
 
     static void printConsoleDivider() {
@@ -169,6 +169,7 @@ class Main {
         map[line][column] = positionStatus;
     }
 
+    // TODO: Fix two battleships merging together.
     static void generateAndSaveBattleshipsToTheMap() {
         Random random = new Random();
         for (int i = 0; i < (mapSize * mapSize) / (mapSize * 2); i++) {
@@ -293,6 +294,11 @@ class Main {
         }
 
         return column - 1;
+    }
+
+    static void printWin() {
+        print("You have destroyed all the battleships!");
+        print("It took you " + attempts + " attempts!");
     }
 
     static void printInvalidValue() {

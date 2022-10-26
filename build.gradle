@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = project.archives_base_name
+group = project.maven_group
+version = project.version
+
+jar {
+    manifest {
+        attributes("Main-Class": project.maven_group + ".battleships.Main")
+    }
+}

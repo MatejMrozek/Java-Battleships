@@ -11,10 +11,6 @@
     Currently console only.
 </p>
 
-<h3 align="center">
-    Two battleships can merge together at the moment, this will get fixed as soon as possible.
-</h3>
-
 <div align="center">
     <img src="https://img.shields.io/github/last-commit/Matejko06/Battleships" alt="GitHub last commit"/>
     <img src="https://img.shields.io/github/commit-activity/w/Matejko06/Battleships" alt="GitHub commit activity"/>

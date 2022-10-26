@@ -1,11 +1,8 @@
 package matej.mrozek.battleships;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
-class Main {
+public class Main {
     static final String gameVersion = "1.0.0";
     static final String author = "Matej Mrozek";
 
@@ -17,24 +14,54 @@ class Main {
 
     static PositionStatus[][] map;
 
+    static boolean start = true;
+
     public static void main(String[] args) {
-        printTitle();
-        print();
+        while (start) {
+            start = false;
 
-        askForMapSize();
+            printTitle();
+            print();
 
-        map = new PositionStatus[mapSize][mapSize];
+            askForMapSize();
 
-        generateAndSaveBattleshipsToTheMap();
+            map = new PositionStatus[mapSize][mapSize];
 
-        while (battleshipPiecesLeft > 0) {
+            generateAndSaveBattleshipsToTheMap();
+
+            while (battleshipPiecesLeft > 0) {
+                printConsoleDivider();
+
+                printTitle();
+
+                print();
+
+                printInformation();
+
+                print();
+
+                printMap();
+
+                print();
+
+                int line = askForLine();
+
+                print();
+
+                int column = askForColumn();
+
+                print();
+
+                updateLineAndColumnPositionStatus(line, column);
+
+                try {
+                    Thread.sleep(2500);
+                } catch (InterruptedException ignored) {}
+            }
+
             printConsoleDivider();
 
             printTitle();
-
-            print();
-
-            printInformation();
 
             print();
 
@@ -42,32 +69,14 @@ class Main {
 
             print();
 
-            int line = askForLine();
+            printWin();
 
             print();
 
-            int column = askForColumn();
+            start = askForRestart();
 
             print();
-
-            updateLineAndColumnPositionStatus(line, column);
-
-            try {
-                Thread.sleep(2500);
-            } catch (InterruptedException ignored) {}
         }
-
-        printConsoleDivider();
-
-        printTitle();
-
-        print();
-
-        printMap();
-
-        print();
-
-        printWin();
     }
 
     static void printConsoleDivider() {
@@ -137,6 +146,78 @@ class Main {
         }
     }
 
+    static void generateAndSaveBattleshipsToTheMap() {
+        Random random = new Random();
+        for (int i = 0; i < (mapSize * mapSize) / (mapSize * 2); i++) {
+            int randomSize;
+            if (mapSize > 6) {
+                randomSize = random.nextInt(2, 5);
+            } else if (mapSize > 4) {
+                randomSize = random.nextInt(2, 4);
+            } else {
+                randomSize = 2;
+            }
+
+            int randomX = random.nextInt(0, mapSize);
+            int randomY = random.nextInt(0, mapSize);
+            Battleship.Orientation orientation;
+            if (random.nextInt(0, 2) == 0) {
+                orientation = Battleship.Orientation.Horizontal;
+                randomX = random.nextInt(0, mapSize - randomSize);
+            } else {
+                orientation = Battleship.Orientation.Vertical;
+                randomY = random.nextInt(0, mapSize - randomSize);
+            }
+
+            boolean overlap = false;
+            for (Battleship battleship : battleships) {
+                int[][] positions = new int[mapSize][mapSize];
+                if (battleship.orientation == Battleship.Orientation.Horizontal) {
+                    for (int x = 0; x < battleship.size; x++) {
+                        positions[battleship.x + x][battleship.y] = 1;
+                    }
+                } else {
+                    for (int y = 0; y < battleship.size; y++) {
+                        positions[battleship.x][battleship.y + y] = 1;
+                    }
+                }
+
+                if (positions[randomX][randomY] == 1) {
+                    overlap = true;
+                }
+            }
+
+            if (overlap) {
+                i--;
+                continue;
+            }
+
+            battleships.add(new Battleship(randomX, randomY, randomSize, orientation));
+        }
+
+        for (int x = 0; x < mapSize; x++) {
+            for (int y = 0; y < mapSize; y++) {
+                map[x][y] = PositionStatus.Water;
+            }
+        }
+
+        for (Battleship battleship : battleships) {
+            for (int i = 0; i < battleship.size; i++) {
+                int x = 0;
+                int y = 0;
+                if (battleship.orientation == Battleship.Orientation.Horizontal) {
+                    x = i;
+                } else {
+                    y = i;
+                }
+
+                map[battleship.x + x][battleship.y + y] = PositionStatus.Battleship;
+
+                battleshipPiecesLeft++;
+            }
+        }
+    }
+
     static void updateLineAndColumnPositionStatus(int line, int column) {
         PositionStatus positionStatus = PositionStatus.Hit_Water;
         switch (map[line][column]) {
@@ -167,54 +248,6 @@ class Main {
         }
 
         map[line][column] = positionStatus;
-    }
-
-    // TODO: Fix two battleships merging together.
-    static void generateAndSaveBattleshipsToTheMap() {
-        Random random = new Random();
-        for (int i = 0; i < (mapSize * mapSize) / (mapSize * 2); i++) {
-            int randomSize;
-            if (mapSize > 6) {
-                randomSize = random.nextInt(2, 5);
-            } else if (mapSize > 4) {
-                randomSize = random.nextInt(2, 4);
-            } else {
-                randomSize = 2;
-            }
-
-            int randomX = random.nextInt(0, mapSize);
-            int randomY = random.nextInt(0, mapSize);
-            Battleship.Orientation orientation;
-            if (random.nextInt(0, 2) == 0) {
-                orientation = Battleship.Orientation.Horizontal;
-                randomX = random.nextInt(0, mapSize - randomSize);
-            } else {
-                orientation = Battleship.Orientation.Vertical;
-                randomY = random.nextInt(0, mapSize - randomSize);
-            }
-
-            battleships.add(new Battleship(randomX, randomY, randomSize, orientation));
-        }
-
-        for (int x = 0; x < mapSize; x++) {
-            for (int y = 0; y < mapSize; y++) {
-                map[x][y] = PositionStatus.Water;
-            }
-        }
-
-        for (Battleship battleship : battleships) {
-            battleshipPiecesLeft += battleship.size;
-
-            if (battleship.orientation == Battleship.Orientation.Horizontal) {
-                for (int x = 0; x < battleship.size; x++) {
-                    map[battleship.x + x][battleship.y] = PositionStatus.Battleship;
-                }
-            } else {
-                for (int y = 0; y < battleship.size; y++) {
-                    map[battleship.x][battleship.y + y] = PositionStatus.Battleship;
-                }
-            }
-        }
     }
 
     static boolean checkLastBattleShipPiece(int line, int column) {
@@ -263,9 +296,9 @@ class Main {
         while (true) {
             print("In which line do you want to shoot next?");
 
-            String shootingLineInput = new Scanner(System.in).nextLine();
+            String lineInput = new Scanner(System.in).nextLine();
             try {
-                line = Integer.parseInt(shootingLineInput);
+                line = Integer.parseInt(lineInput);
                 if (line < mapSize + 1 && line >= 1) {
                     break;
                 }
@@ -282,9 +315,9 @@ class Main {
         while (true) {
             print("In which column do you want to shoot next?");
 
-            String shootingColumnInput = new Scanner(System.in).nextLine();
+            String columnInput = new Scanner(System.in).nextLine();
             try {
-                column = Integer.parseInt(shootingColumnInput);
+                column = Integer.parseInt(columnInput);
                 if (column < mapSize + 1 && column >= 1) {
                     break;
                 }
@@ -294,6 +327,25 @@ class Main {
         }
 
         return column - 1;
+    }
+
+    static boolean askForRestart() {
+        while (true) {
+            print("Do you want to play again? (\"Yes\" or \"No\")");
+
+            String restartInput = new Scanner(System.in).nextLine();
+            switch (restartInput.toLowerCase(Locale.ROOT)) {
+                case "yes" -> {
+                    return  true;
+                }
+                case "no" -> {
+                    return false;
+                }
+                default -> {
+                    printInvalidValue();
+                }
+            }
+        }
     }
 
     static void printWin() {
@@ -341,7 +393,7 @@ class Main {
         Hit_Water('W'),
         Hit_Battleship('X');
 
-        private final char character;
+        final char character;
 
         PositionStatus(char character) {
             this.character = character;

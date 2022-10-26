@@ -1,5 +1,5 @@
 <!--<div align="center">
-  <img src="" alt="Battleships" width="128" height="128">
+  <img src="https://github.com/Matejko06/Battleships/blob/master/src/main/resources/assets/icon.png?raw=true" alt="Battleships" width="128" height="128">
 </div>-->
 
 <h1 align="center">

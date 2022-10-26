@@ -1,6 +1,6 @@
-<!--<div align="center">
+<div align="center">
   <img src="https://github.com/Matejko06/Battleships/blob/master/src/main/resources/assets/icon.png?raw=true" alt="Battleships" width="128" height="128">
-</div>-->
+</div>
 
 <h1 align="center">
   Battleships

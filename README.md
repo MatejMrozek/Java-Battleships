@@ -11,7 +11,7 @@
     Currently console only.
 </p>
 
-<h3 aligh="center">
+<h3 align="center">
     Two battleships can merge together at the moment, this will get fixed as soon as possible.
 </h3>
 

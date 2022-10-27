@@ -184,9 +184,6 @@ public class Main {
             boolean overlap = false;
             for (Battleship battleship : battleships) {
                 boolean[][] positions = new boolean[mapSize][mapSize];
-
-                Arrays.fill(positions, false);
-
                 if (battleship.orientation == Battleship.Orientation.Horizontal) {
                     for (int x = 0; x < battleship.size; x++) {
                         positions[battleship.x + x][battleship.y] = true;
@@ -210,7 +207,11 @@ public class Main {
             battleships.add(new Battleship(randomX, randomY, randomSize, orientation));
         }
 
-        Arrays.fill(map, PositionStatus.Water);
+        for (int x = 0; x < mapSize; x++) {
+            for (int y = 0; y < mapSize; y++) {
+                map[x][y] = PositionStatus.Water;
+            }
+        }
 
         for (Battleship battleship : battleships) {
             for (int i = 0; i < battleship.size; i++) {
@@ -264,9 +265,6 @@ public class Main {
     static boolean checkLastBattleShipPiece(int line, int column) {
         for (Battleship battleship : battleships) {
             boolean[][] positions = new boolean[mapSize][mapSize];
-
-            Arrays.fill(positions, false);
-
             if (battleship.orientation == Battleship.Orientation.Horizontal) {
                 for (int x = 0; x < battleship.size; x++) {
                     positions[battleship.x + x][battleship.y] = true;

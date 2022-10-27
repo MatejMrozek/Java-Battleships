@@ -3,7 +3,8 @@ package matej.mrozek.battleships;
 import java.util.*;
 
 public class Main {
-    static final String gameVersion = "1.0.0";
+    static String version = "1.0.0";
+
     static final String author = "Matej Mrozek";
 
     static int mapSize = 0;
@@ -17,10 +18,19 @@ public class Main {
     static boolean start = true;
 
     public static void main(String[] args) {
+        //TODO: Load version from metadata.json
+
         while (start) {
+            mapSize = 0;
+
             start = false;
 
             printTitle();
+
+            print();
+
+            printInformation();
+
             print();
 
             askForMapSize();
@@ -94,11 +104,13 @@ public class Main {
     static void printInformation() {
         StringBuilder informationStringBuilder = new StringBuilder();
 
-        informationStringBuilder.append("Game version: ").append(gameVersion).append("\n");
+        informationStringBuilder.append("Game version: ").append(version).append("\n");
 
         informationStringBuilder.append("Author: ").append(author).append("\n");
 
-        informationStringBuilder.append("Map size: ").append(mapSize).append("\n");
+        if (mapSize > 0) {
+            informationStringBuilder.append("Map size: ").append(mapSize).append("\n");
+        }
 
         if (attempts > 0) {
             informationStringBuilder.append("Attempts: ").append(attempts);
@@ -252,18 +264,18 @@ public class Main {
 
     static boolean checkLastBattleShipPiece(int line, int column) {
         for (Battleship battleship : battleships) {
-            int[][] positions = new int[mapSize][mapSize];
+            boolean[][] positions = new boolean[mapSize][mapSize];
             if (battleship.orientation == Battleship.Orientation.Horizontal) {
                 for (int x = 0; x < battleship.size; x++) {
-                    positions[battleship.x + x][battleship.y] = 1;
+                    positions[battleship.x + x][battleship.y] = true;
                 }
             } else {
                 for (int y = 0; y < battleship.size; y++) {
-                    positions[battleship.x][battleship.y + y] = 1;
+                    positions[battleship.x][battleship.y + y] = true;
                 }
             }
 
-            if (positions[line][column] == 1) {
+            if (positions[line][column]) {
                 battleship.piecesLeft--;
 
                 if (battleship.piecesLeft == 0) {
@@ -299,7 +311,7 @@ public class Main {
             String lineInput = new Scanner(System.in).nextLine();
             try {
                 line = Integer.parseInt(lineInput);
-                if (line < mapSize + 1 && line >= 1) {
+                if (line < mapSize + 1 && line > 0) {
                     break;
                 }
             } catch (Exception ignored) {}
@@ -318,7 +330,7 @@ public class Main {
             String columnInput = new Scanner(System.in).nextLine();
             try {
                 column = Integer.parseInt(columnInput);
-                if (column < mapSize + 1 && column >= 1) {
+                if (column < mapSize + 1 && column > 0) {
                     break;
                 }
             } catch (Exception ignored) {}

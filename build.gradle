@@ -2,12 +2,34 @@ plugins {
     id "java"
 }
 
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 version = project.version
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //implementation "org.json:json:${project.json_version}"
+}
+
+processResources {
+    filesMatching("metadata.json") {
+        expand "version": project.version
+    }
+}
+
 jar {
+    from "LICENSE"
+
     manifest {
         attributes("Main-Class": project.maven_group + ".battleships.Main")
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding("UTF-8")
 }

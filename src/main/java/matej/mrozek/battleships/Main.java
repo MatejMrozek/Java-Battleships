@@ -183,18 +183,21 @@ public class Main {
 
             boolean overlap = false;
             for (Battleship battleship : battleships) {
-                int[][] positions = new int[mapSize][mapSize];
+                boolean[][] positions = new boolean[mapSize][mapSize];
+
+                Arrays.fill(positions, false);
+
                 if (battleship.orientation == Battleship.Orientation.Horizontal) {
                     for (int x = 0; x < battleship.size; x++) {
-                        positions[battleship.x + x][battleship.y] = 1;
+                        positions[battleship.x + x][battleship.y] = true;
                     }
                 } else {
                     for (int y = 0; y < battleship.size; y++) {
-                        positions[battleship.x][battleship.y + y] = 1;
+                        positions[battleship.x][battleship.y + y] = true;
                     }
                 }
 
-                if (positions[randomX][randomY] == 1) {
+                if (positions[randomX][randomY]) {
                     overlap = true;
                 }
             }
@@ -207,11 +210,7 @@ public class Main {
             battleships.add(new Battleship(randomX, randomY, randomSize, orientation));
         }
 
-        for (int x = 0; x < mapSize; x++) {
-            for (int y = 0; y < mapSize; y++) {
-                map[x][y] = PositionStatus.Water;
-            }
-        }
+        Arrays.fill(map, PositionStatus.Water);
 
         for (Battleship battleship : battleships) {
             for (int i = 0; i < battleship.size; i++) {
@@ -265,6 +264,9 @@ public class Main {
     static boolean checkLastBattleShipPiece(int line, int column) {
         for (Battleship battleship : battleships) {
             boolean[][] positions = new boolean[mapSize][mapSize];
+
+            Arrays.fill(positions, false);
+
             if (battleship.orientation == Battleship.Orientation.Horizontal) {
                 for (int x = 0; x < battleship.size; x++) {
                     positions[battleship.x + x][battleship.y] = true;

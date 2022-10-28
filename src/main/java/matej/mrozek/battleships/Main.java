@@ -289,7 +289,7 @@ public class Main {
 
     static void askForMapSize() {
         while (true) {
-            print("Enter the map size:");
+            print("Enter the map size: ", false);
 
             String inputMapSize = new Scanner(System.in).nextLine();
             try {
@@ -306,7 +306,7 @@ public class Main {
     static int askForLine() {
         int line;
         while (true) {
-            print("In which line do you want to shoot next?");
+            print("In which line do you want to shoot next? ", false);
 
             String lineInput = new Scanner(System.in).nextLine();
             try {
@@ -325,7 +325,7 @@ public class Main {
     static int askForColumn() {
         int column;
         while (true) {
-            print("In which column do you want to shoot next?");
+            print("In which column do you want to shoot next? ", false);
 
             String columnInput = new Scanner(System.in).nextLine();
             try {
@@ -343,7 +343,7 @@ public class Main {
 
     static boolean askForRestart() {
         while (true) {
-            print("Do you want to play again? (\"Yes\" or \"No\")");
+            print("Do you want to play again (\"Yes\" or \"No\")? ", false);
 
             String restartInput = new Scanner(System.in).nextLine();
             switch (restartInput.toLowerCase(Locale.ROOT)) {
@@ -370,7 +370,15 @@ public class Main {
     }
 
     static void print(String text) {
-        System.out.println(text);
+        print(text, true);
+    }
+
+    static void print(String text, boolean newLine) {
+        if (newLine) {
+            System.out.println(text);
+        } else {
+            System.out.print(text);
+        }
     }
 
     static void print() {

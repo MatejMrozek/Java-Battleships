@@ -106,14 +106,14 @@ public class Main {
 
         informationStringBuilder.append("Game version: ").append(version).append("\n");
 
-        informationStringBuilder.append("Author: ").append(author).append("\n");
+        informationStringBuilder.append("Author: ").append(author);
 
         if (mapSize > 0) {
-            informationStringBuilder.append("Map size: ").append(mapSize).append("\n");
+            informationStringBuilder.append("\n").append("Map size: ").append(mapSize);
         }
 
         if (attempts > 0) {
-            informationStringBuilder.append("Attempts: ").append(attempts);
+            informationStringBuilder.append("\n").append("Attempts: ").append(attempts);
         }
 
         print(informationStringBuilder.toString());

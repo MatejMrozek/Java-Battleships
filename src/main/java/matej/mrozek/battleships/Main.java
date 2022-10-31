@@ -118,7 +118,7 @@ public class Main {
                 }
             } catch (Exception ignored) {}
 
-            printInvalidValue();
+            logInvalidValue();
         }
     }
 
@@ -135,7 +135,7 @@ public class Main {
                 }
             } catch (Exception ignored) {}
 
-            printInvalidValue();
+            logInvalidValue();
         }
 
         return x - 1;
@@ -154,7 +154,7 @@ public class Main {
                 }
             } catch (Exception ignored) {}
 
-            printInvalidValue();
+            logInvalidValue();
         }
 
         return y - 1;
@@ -172,7 +172,7 @@ public class Main {
                 case "no" -> {
                     return false;
                 }
-                default -> printInvalidValue();
+                default -> logInvalidValue();
             }
         }
     }
@@ -182,7 +182,7 @@ public class Main {
         new Log("It took you " + Info.getAttempts() + " attempts!");
     }
 
-    private static void printInvalidValue() {
+    private static void logInvalidValue() {
         new Log("Invalid value! Try again!");
     }
 }

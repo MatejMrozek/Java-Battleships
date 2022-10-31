@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Map {
-    private Position[][] map;
+    private PositionStatus[][] map;
     private int size = 0;
 
     private final List<Battleship> battleships = new ArrayList<>();
@@ -13,10 +13,6 @@ public class Map {
 
     public void setSize(int size) {
         this.size = size;
-    }
-
-    public void setBattleshipPieces(int battleshipPieces) {
-        this.battleshipPieces = battleshipPieces;
     }
 
     public int getSize() {
@@ -28,10 +24,10 @@ public class Map {
     }
 
     public void generate() {
-        map = new Position[size][size];
+        map = new PositionStatus[size][size];
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                map[x][y] = Position.Water;
+                setPosition(x, y, PositionStatus.Water);
             }
         }
 
@@ -87,23 +83,10 @@ public class Map {
             battleships.add(new Battleship(randomX, randomY, randomSize, orientation));
         }
 
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                map[x][y] = Position.Water;
-            }
-        }
-
         for (Battleship battleship : battleships) {
             for (int i = 0; i < battleship.size; i++) {
-                int x = 0;
-                int y = 0;
-                if (battleship.orientation == Battleship.Orientation.Horizontal) {
-                    x = i;
-                } else {
-                    y = i;
-                }
-
-                map[battleship.x + x][battleship.y + y] = Map.Position.Battleship;
+                boolean horizontal = battleship.orientation == Battleship.Orientation.Horizontal;
+                setPosition(battleship.x + (horizontal ? i : 0), battleship.y + (!horizontal ? i : 0), PositionStatus.Battleship);
 
                 battleshipPieces++;
             }
@@ -134,7 +117,7 @@ public class Map {
                     lineStringBuilder.append(" - ");
                 }
 
-                lineStringBuilder.append(map[x][y]);
+                lineStringBuilder.append(getPosition(x, y));
 
                 if (String.valueOf(y + 1).length() > previousLength) {
                     spaceStringBuilder.append(" ");
@@ -150,10 +133,10 @@ public class Map {
     }
 
     public void update(int x, int y) {
-        Position position = getPosition(x, y);
-        switch (position) {
+        PositionStatus positionStatus = getPosition(x, y);
+        switch (positionStatus) {
             case Battleship -> {
-                map[x][y] = Position.Hit_Battleship;
+                setPosition(x, y, PositionStatus.Hit_Battleship);
 
                 new Log("You hit a battleship!");
 
@@ -181,12 +164,20 @@ public class Map {
         for (Battleship battleship : battleships) {
             boolean[][] positions = new boolean[size][size];
             if (battleship.orientation == Battleship.Orientation.Horizontal) {
-                for (int mapX = 0; mapX < battleship.size; mapX++) {
-                    positions[battleship.x + mapX][battleship.y] = true;
+                for (int i = 0; i < battleship.size; i++) {
+                    positions[battleship.x + i][battleship.y] = true;
                 }
             } else {
-                for (int mapY = 0; mapY < battleship.size; mapY++) {
-                    positions[battleship.x][battleship.y + mapY] = true;
+                for (int i = 0; i < battleship.size; i++) {
+                    positions[battleship.x][battleship.y + i] = true;
+                }
+            }
+
+            for (int i = 0; i < battleship.size; i++) {
+                if (battleship.orientation == Battleship.Orientation.Horizontal) {
+                    positions[battleship.x + i][battleship.y] = true;
+                } else {
+                    positions[battleship.x][battleship.y + i] = true;
                 }
             }
 
@@ -201,11 +192,15 @@ public class Map {
         return false;
     }
 
-    public Position getPosition(int x, int y) {
+    public void setPosition(int x, int y, PositionStatus positionStatus) {
+        map[x][y] = positionStatus;
+    }
+
+    public PositionStatus getPosition(int x, int y) {
         return map[x][y];
     }
 
-    enum Position {
+    enum PositionStatus {
         Water('0'),
         Battleship('0'),
         Hit_Water('W'),
@@ -213,7 +208,7 @@ public class Map {
 
         final char character;
 
-        Position(char character) {
+        PositionStatus(char character) {
             this.character = character;
         }
 

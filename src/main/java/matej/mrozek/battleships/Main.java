@@ -26,8 +26,7 @@ public class Main {
             MAP.setSize(mapSize);
             MAP.generate();
 
-            int battleshipPieces = MAP.getBattleshipPieces();
-            while (battleshipPieces > 0) {
+            while (MAP.getBattleshipPieces() > 0) {
                 logDivider();
 
                 logTitle();
@@ -42,11 +41,11 @@ public class Main {
 
                 new Log();
 
-                int y = askForX();
+                int x = askForY();
 
                 new Log();
 
-                int x = askForY();
+                int y = askForX();
 
                 new Log();
 

@@ -49,7 +49,7 @@ public class Map {
             int randomX = random.nextInt(0, size);
             int randomY = random.nextInt(0, size);
             Battleship.Orientation orientation;
-            if (random.nextInt(0, 2) == 0) {
+            if (random.nextBoolean()) {
                 orientation = Battleship.Orientation.Horizontal;
                 randomX = random.nextInt(0, size - randomSize);
             } else {
@@ -60,13 +60,11 @@ public class Map {
             boolean overlap = false;
             for (Battleship battleship : battleships) {
                 boolean[][] positions = new boolean[size][size];
-                if (battleship.orientation == Battleship.Orientation.Horizontal) {
-                    for (int x = 0; x < battleship.size; x++) {
-                        positions[battleship.x + x][battleship.y] = true;
-                    }
-                } else {
-                    for (int y = 0; y < battleship.size; y++) {
-                        positions[battleship.x][battleship.y + y] = true;
+                for (int j = 0; j < battleship.size; j++) {
+                    if (battleship.orientation == Battleship.Orientation.Horizontal) {
+                        positions[battleship.x + j][battleship.y] = true;
+                    } else {
+                        positions[battleship.x][battleship.y + j] = true;
                     }
                 }
 
@@ -133,8 +131,7 @@ public class Map {
     }
 
     public void update(int x, int y) {
-        PositionStatus positionStatus = getPosition(x, y);
-        switch (positionStatus) {
+        switch (getPosition(x, y)) {
             case Battleship -> {
                 setPosition(x, y, PositionStatus.Hit_Battleship);
 
@@ -152,6 +149,8 @@ public class Map {
             }
             case Hit_Battleship -> new Log("You have already hit that battleship!");
             case Water -> {
+                setPosition(x, y, PositionStatus.Hit_Water);
+
                 new Log("You hit water!");
 
                 Info.addAttempt();
@@ -163,20 +162,10 @@ public class Map {
     public boolean checkLastPiece(int x, int y) {
         for (Battleship battleship : battleships) {
             boolean[][] positions = new boolean[size][size];
-            if (battleship.orientation == Battleship.Orientation.Horizontal) {
-                for (int i = 0; i < battleship.size; i++) {
-                    positions[battleship.x + i][battleship.y] = true;
-                }
-            } else {
-                for (int i = 0; i < battleship.size; i++) {
-                    positions[battleship.x][battleship.y + i] = true;
-                }
-            }
-
             for (int i = 0; i < battleship.size; i++) {
                 if (battleship.orientation == Battleship.Orientation.Horizontal) {
                     positions[battleship.x + i][battleship.y] = true;
-                } else {
+                } else{
                     positions[battleship.x][battleship.y + i] = true;
                 }
             }
@@ -206,7 +195,7 @@ public class Map {
         Hit_Water('W'),
         Hit_Battleship('X');
 
-        final char character;
+        private final char character;
 
         PositionStatus(char character) {
             this.character = character;

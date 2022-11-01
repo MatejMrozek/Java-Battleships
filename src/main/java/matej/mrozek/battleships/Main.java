@@ -3,11 +3,17 @@ package matej.mrozek.battleships;
 import java.util.*;
 
 public class Main {
-    static final Map MAP = new Map();
+    //private static Window WINDOW;
 
-    static boolean start = true;
+    private static final Map MAP = new Map();
+
+    private static boolean start = true;
 
     public static void main(String[] args) {
+        Info.reset();
+
+        //EventQueue.invokeLater(() -> WINDOW = new Window("Battleships v" + Info.version));
+
         while (start) {
             Info.reset();
 
@@ -22,9 +28,10 @@ public class Main {
             new Log();
 
             int mapSize = askForMapSize();
-
             MAP.setSize(mapSize);
             MAP.generate();
+
+            //WINDOW.loadMap(MAP);
 
             while (MAP.getBattleshipPieces() > 0) {
                 logDivider();

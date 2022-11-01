@@ -189,6 +189,10 @@ public class Map {
         return map[x][y];
     }
 
+    public String getPositionString(int x, int y) {
+        return getPosition(x, y).toString();
+    }
+
     enum PositionStatus {
         Water('0'),
         Battleship('0'),

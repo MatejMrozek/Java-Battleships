@@ -37,5 +37,6 @@ public class Window extends JFrame {
     private void addComponent(Component component) {
         panel.add(component);
         this.setContentPane(panel);
+        this.setVisible(true);
     }
 }

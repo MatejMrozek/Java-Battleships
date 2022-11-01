@@ -56,7 +56,7 @@ public class Main {
 
                 new Log();
 
-                MAP.update(x, y);
+                MAP.update(new Coordinate(x, y));
 
                 try {
                     Thread.sleep(2500);

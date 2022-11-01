@@ -1,6 +1,6 @@
 package matej.mrozek.battleships.gui;
 
-import matej.mrozek.battleships.Log;
+import matej.mrozek.battleships.Coordinate;
 import matej.mrozek.battleships.Map;
 
 import javax.swing.*;
@@ -27,8 +27,11 @@ public class Window extends JFrame {
     public void loadMap(Map map) {
         int mapSize = map.getSize();
         for (int x = 0; x < mapSize; x++) {
-            for (int y = 0; y< mapSize; y++) {
-                Button button = new Button(map.getPositionString(x, y), x * 25 + x * 5, y * 25 + y * 5, 25, 25);
+            for (int y = 0; y < mapSize; y++) {
+                int buttonSize = 25;
+                int buttonX = y * buttonSize + y * 5;
+                int buttonY = x * buttonSize + x * 5;
+                Button button = new Button(String.valueOf(map.getCoordinate(new Coordinate(x, y))), buttonX, buttonY, buttonSize, buttonSize);
                 addComponent(button);
             }
         }

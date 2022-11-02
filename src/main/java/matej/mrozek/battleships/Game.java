@@ -103,13 +103,13 @@ public class Game {
     }
 
     private static boolean askForRestart() {
-        String restartInput = WINDOW.showYesNoInput("Restart", "Do you want to play again?");
-        if (restartInput == null) {
+        Window.OptionPaneButton restartInput = WINDOW.showYesNoInput("Restart", "Do you want to play again?");
+        if (restartInput == Window.OptionPaneButton.Cancel) {
             int code = 0;
             DEBUG_LOG.info("Exiting with exit code: " + code);
             System.exit(code);
         }
 
-        return restartInput.equals("yes");
+        return restartInput == Window.OptionPaneButton.Yes;
     }
 }

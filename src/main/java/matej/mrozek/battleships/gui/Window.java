@@ -59,12 +59,12 @@ public class Window extends JFrame {
         JOptionPane.showMessageDialog(this, text, title, messageType, null);
     }
 
-    public String showYesNoInput(String title, String text) {
+    public OptionPaneButton showYesNoInput(String title, String text) {
         int option = JOptionPane.showConfirmDialog(this, text, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
         return switch (option) {
-            case 0 -> "yes";
-            case 1 -> "no";
-            default -> null;
+            case 0 -> OptionPaneButton.Yes;
+            case 1 -> OptionPaneButton.No;
+            default -> OptionPaneButton.Cancel;
         };
     }
 
@@ -76,5 +76,11 @@ public class Window extends JFrame {
         this.panel.add(component);
         this.setContentPane(this.panel);
         this.setVisible(true);
+    }
+
+    public enum OptionPaneButton {
+        Yes,
+        No,
+        Cancel
     }
 }

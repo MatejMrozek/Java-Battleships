@@ -22,6 +22,8 @@ public class Window extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setSize(this.screen.width / 2, this.screen.height / 2);
+        this.setResizable(false);
+        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
         clear();
     }
 
@@ -33,13 +35,22 @@ public class Window extends JFrame {
 
     public void loadMap(CoordinateMap coordinateMap) {
         int mapSize = coordinateMap.getSize();
+        boolean resize = true;
         for (int x = 0; x < mapSize; x++) {
             for (int y = 0; y < mapSize; y++) {
                 int buttonSize = 25;
-                int buttonX = x * buttonSize + x * 5;
-                int buttonY = y * buttonSize + y * 5;
+                int buttonX = 5 + x * buttonSize + x * 5;
+                int buttonY = 5 + y * buttonSize + y * 5;
                 Button button = new Button(new Coordinate(x, y), buttonX, buttonY, buttonSize, buttonSize);
                 addComponent(button);
+            }
+
+            if (resize) {
+                resize = false;
+                int size = 5 + (25 * mapSize) + (5 * mapSize);
+                this.pack();
+                this.setSize(size + 17, size + 40);
+                this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
             }
         }
     }

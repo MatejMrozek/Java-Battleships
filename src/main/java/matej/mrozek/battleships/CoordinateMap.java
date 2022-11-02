@@ -58,7 +58,7 @@ public class CoordinateMap {
 
             List<Coordinate> coordinates = new ArrayList<>();
             boolean horizontalOrientation = randomOrientation == Battleship.Orientation.Horizontal;
-            for (int j = horizontalOrientation ? randomX : randomY; j < randomSize; j++) {
+            for (int j = horizontalOrientation ? randomX : randomY; j - (horizontalOrientation ? randomX : randomY) < randomSize; j++) {
                 coordinates.add(new Coordinate(horizontalOrientation ? j : randomX, horizontalOrientation ? randomY : j));
             }
 
@@ -98,6 +98,14 @@ public class CoordinateMap {
             case Battleship -> {
                 setCoordinateStatus(coordinate, CoordinateStatus.Hit_Battleship);
 
+                for (Battleship battleship : battleships) {
+                    for (Coordinate battleshipCoordinate: battleship.coordinates) {
+                        if (coordinate.isEqualTo(battleshipCoordinate)) {
+                            battleship.piecesLeft--;
+                        }
+                    }
+                }
+
                 list.set(1, checkLastBattleshipPiece(coordinate));
 
                 battleshipPieces--;
@@ -111,21 +119,13 @@ public class CoordinateMap {
             }
         }
 
-
-
         return list;
     }
 
     public boolean checkLastBattleshipPiece(Coordinate coordinate) {
         for (Battleship battleship : battleships) {
-            boolean[][] positions = new boolean[size][size];
             for (Coordinate battleshipCoordinate : battleship.coordinates) {
-                positions[battleshipCoordinate.x][battleshipCoordinate.y] = true;
-            }
-
-            if (positions[coordinate.x][coordinate.y]) {
-                battleship.piecesLeft--;
-                if (battleship.piecesLeft == 0) {
+                if (coordinate.isEqualTo(battleshipCoordinate) && battleship.piecesLeft == 0) {
                     return true;
                 }
             }

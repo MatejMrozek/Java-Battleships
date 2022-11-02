@@ -36,8 +36,8 @@ public class Window extends JFrame {
         for (int x = 0; x < mapSize; x++) {
             for (int y = 0; y < mapSize; y++) {
                 int buttonSize = 25;
-                int buttonX = y * buttonSize + y * 5;
-                int buttonY = x * buttonSize + x * 5;
+                int buttonX = x * buttonSize + x * 5;
+                int buttonY = y * buttonSize + y * 5;
                 Button button = new Button(new Coordinate(x, y), buttonX, buttonY, buttonSize, buttonSize);
                 addComponent(button);
             }
@@ -45,7 +45,6 @@ public class Window extends JFrame {
     }
 
     public void showMessage(String title, String text, int messageType) {
-        System.out.println("XD");
         JOptionPane.showMessageDialog(this, text, title, messageType, null);
     }
 

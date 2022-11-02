@@ -5,6 +5,8 @@ import matej.mrozek.battleships.CoordinateMap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Window extends JFrame {
@@ -34,24 +36,38 @@ public class Window extends JFrame {
     }
 
     public void loadMap(CoordinateMap coordinateMap) {
+        List<Component> components = new ArrayList<>();
         int mapSize = coordinateMap.getSize();
         boolean resize = true;
+        int gap = 5;
+        int componentSize = gap * gap;
         for (int x = 0; x < mapSize; x++) {
+            int topTextX = gap + (x + 1) * componentSize + (x + 1) * gap;
+            Text topText = new Text(String.valueOf(x + 1), topTextX, gap, componentSize, componentSize);
+            components.add(topText);
+
             for (int y = 0; y < mapSize; y++) {
-                int buttonSize = 25;
-                int buttonX = 5 + x * buttonSize + x * 5;
-                int buttonY = 5 + y * buttonSize + y * 5;
-                Button button = new Button(new Coordinate(x, y), buttonX, buttonY, buttonSize, buttonSize);
-                addComponent(button);
+                int leftTextY = gap + (y + 1) * componentSize + (y + 1) * gap;
+                Text leftText = new Text(String.valueOf(y + 1), gap, leftTextY, componentSize, componentSize);
+                components.add(leftText);
+
+                int buttonX = (gap * 7) + x * componentSize + x * gap;
+                int buttonY = (gap * 7) + y * componentSize + y * gap;
+                Button button = new Button(new Coordinate(x, y), buttonX, buttonY, componentSize, componentSize);
+                components.add(button);
             }
 
             if (resize) {
                 resize = false;
-                int size = 5 + (25 * mapSize) + (5 * mapSize);
+                int size = (gap * 7) + (componentSize * mapSize) + (gap * mapSize);
                 this.pack();
                 this.setSize(size + 17, size + 40);
                 this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
             }
+        }
+
+        for (Component component : components) {
+            addComponent(component);
         }
     }
 

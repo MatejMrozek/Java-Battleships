@@ -11,8 +11,6 @@ import java.util.Scanner;
 public class Info {
     public static String version = "Unknown";
 
-    public static final String author = "Matej Mrozek";
-
     private static int attempts = 0;
 
     public static void reset() {
@@ -20,7 +18,7 @@ public class Info {
             JSONObject jsonObject = new JSONObject(scanner.useDelimiter("\\A").next());
             version = jsonObject.getString("version");
         } catch (IOException exception) {
-            exception.printStackTrace();
+            Game.DEBUG_LOG.error(exception.getMessage());
         }
 
         attempts = 0;

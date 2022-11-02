@@ -1,9 +1,8 @@
 package matej.mrozek.battleships;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class Map {
+public class CoordinateMap {
     private CoordinateStatus[][] map;
     private int size = 0;
 
@@ -26,7 +25,7 @@ public class Map {
         map = new CoordinateStatus[size][size];
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                setPosition(new Coordinate(x, y), CoordinateStatus.Water);
+                setCoordinateStatus(new Coordinate(x, y), CoordinateStatus.Water);
             }
         }
 
@@ -63,15 +62,13 @@ public class Map {
                 coordinates.add(new Coordinate(horizontalOrientation ? j : randomX, horizontalOrientation ? randomY : j));
             }
 
+            Battleship generatedBattleship = new Battleship(coordinates, randomSize, randomOrientation);
             boolean discard = coordinates.size() < 2;
             if (!discard) {
                 for (Battleship battleship : battleships) {
-                    for (Coordinate battleshipCoordinate : battleship.coordinates) {
-                        for (Coordinate coordinate : coordinates) {
-                            if (coordinate.isEqualTo(battleshipCoordinate)) {
-                                discard = true;
-                            }
-                        }
+                    if (generatedBattleship.isOverlapping(battleship)) {
+                        discard = true;
+                        break;
                     }
                 }
             }
@@ -79,80 +76,47 @@ public class Map {
             if (discard) {
                 i--;
             } else {
-                battleships.add(new Battleship(coordinates, randomSize, randomOrientation));
+                battleships.add(generatedBattleship);
             }
         }
 
         for (Battleship battleship : battleships) {
             for (Coordinate coordinate : battleship.coordinates) {
-                setPosition(coordinate, CoordinateStatus.Battleship);
+                setCoordinateStatus(coordinate, CoordinateStatus.Battleship);
 
                 battleshipPieces++;
             }
         }
     }
 
-    public void log() {
-        StringBuilder columnStringBuilder = new StringBuilder("     ");
-        columnStringBuilder.append(" ".repeat(String.valueOf(size).length()));
-        for (int x = 0; x < size; x++) {
-            columnStringBuilder.append(x + 1);
-            if (x < size - 1) {
-                columnStringBuilder.append(" - ");
-            }
-        }
-
-        new Log(columnStringBuilder.toString());
-
-        new Log();
-
-        for (int x = 0; x < size; x++) {
-            String readableX = String.valueOf(x + 1);
-            StringBuilder lineStringBuilder = new StringBuilder(" " + readableX + "    ");
-            lineStringBuilder.append(" ".repeat(String.valueOf(size).length() - readableX.length()));
-            for (int y = 0; y < size; y++) {
-                if (y > 0) {
-                    lineStringBuilder.append(" - ");
-                }
-
-                int yLength = String.valueOf(y + 1).length();
-                lineStringBuilder.append(map[x][y]).append(" ".repeat(yLength > 1 ? yLength - 1 : 0));
-            }
-
-            new Log(lineStringBuilder.toString());
-        }
-    }
-
-    public void update(Coordinate coordinate) {
-        switch (getCoordinate(coordinate)) {
+    public List<Object> update(Coordinate coordinate) {
+        List<Object> list = new ArrayList<>();
+        CoordinateStatus coordinateStatus = getCoordinateStatus(coordinate);
+        list.add(coordinateStatus);
+        list.add(false);
+        switch (coordinateStatus) {
             case Battleship -> {
-                setPosition(coordinate, CoordinateStatus.Hit_Battleship);
+                setCoordinateStatus(coordinate, CoordinateStatus.Hit_Battleship);
 
-                new Log("You hit a battleship!");
-
-                if (checkLastPiece(coordinate)) {
-                    new Log();
-
-                    new Log("You sunk a battleship!");
-                }
+                list.set(1, checkLastBattleshipPiece(coordinate));
 
                 battleshipPieces--;
 
                 Info.addAttempt();
             }
-            case Hit_Battleship -> new Log("You have already hit that battleship!");
             case Water -> {
-                setPosition(coordinate, CoordinateStatus.Hit_Water);
-
-                new Log("You hit water!");
+                setCoordinateStatus(coordinate, CoordinateStatus.Hit_Water);
 
                 Info.addAttempt();
             }
-            case Hit_Water -> new Log("You have already hit that water!");
         }
+
+
+
+        return list;
     }
 
-    public boolean checkLastPiece(Coordinate coordinate) {
+    public boolean checkLastBattleshipPiece(Coordinate coordinate) {
         for (Battleship battleship : battleships) {
             boolean[][] positions = new boolean[size][size];
             for (Coordinate battleshipCoordinate : battleship.coordinates) {
@@ -170,15 +134,15 @@ public class Map {
         return false;
     }
 
-    public void setPosition(Coordinate coordinate, CoordinateStatus coordinateStatus) {
+    public void setCoordinateStatus(Coordinate coordinate, CoordinateStatus coordinateStatus) {
         map[coordinate.x][coordinate.y] = coordinateStatus;
     }
 
-    public CoordinateStatus getCoordinate(Coordinate coordinate) {
+    public CoordinateStatus getCoordinateStatus(Coordinate coordinate) {
         return map[coordinate.x][coordinate.y];
     }
 
-    enum CoordinateStatus {
+    public enum CoordinateStatus {
         Water('0'),
         Battleship('0'),
         Hit_Water('W'),

@@ -1,8 +1,7 @@
 package matej.mrozek.battleships;
 
 public class Coordinate {
-    public int x;
-    public int y;
+    public int x, y;
 
     public Coordinate(int x, int y) {
         this.x = x;

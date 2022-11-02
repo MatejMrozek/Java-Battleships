@@ -8,7 +8,7 @@
 
 <p align="center">
     Battleships game written in Java.<br>
-    Currently console only.
+    Very early WIP GUI.
 </p>
 
 <div align="center">

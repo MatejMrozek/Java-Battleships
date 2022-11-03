@@ -100,7 +100,7 @@ public class Game {
     private static int askForMapSize() {
         int mapSize;
         while (true) {
-            String mapSizeInput = gameWindow.showInput("Map Size Selection", "How many lines and columns should the map have?\n\nHigher and equal to 3 and lower or equal to 25.");
+            String mapSizeInput = gameWindow.showInput("Map Size Selection", "How many lines and columns should the map have?\n\nHigher and equal to 5 and lower or equal to 25.");
             if (mapSizeInput == null) {
                 int code = 0;
                 DEBUG.info("Exiting with exit code: " + code);
@@ -110,7 +110,7 @@ public class Game {
             try {
                 DEBUG.info("Parsing int from input value...");
                 mapSize = Integer.parseInt(mapSizeInput);
-                if (mapSize >= 3 && mapSize <= 25) {
+                if (mapSize >= 5 && mapSize <= 25) {
                     DEBUG.info("Input value parsed as int!");
                     break;
                 }

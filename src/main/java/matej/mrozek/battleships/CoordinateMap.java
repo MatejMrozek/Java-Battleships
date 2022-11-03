@@ -1,5 +1,7 @@
 package matej.mrozek.battleships;
 
+import com.sun.tools.javac.Main;
+
 import java.util.*;
 
 public class CoordinateMap {
@@ -22,6 +24,8 @@ public class CoordinateMap {
     }
 
     public void generate() {
+        Game.DEBUG.info("Generating map...");
+
         map = new CoordinateStatus[size][size];
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
@@ -29,11 +33,19 @@ public class CoordinateMap {
             }
         }
 
+        Game.DEBUG.info("Set all coordinates to water.");
+
         generateShips();
+
+        Game.DEBUG.info("Map generated!");
     }
 
     public void generateShips() {
+        Game.DEBUG.info("Generating battleships...");
         for (int i = 0; i < (size * size) / (size * 2); i++) {
+            Game.DEBUG.info("Generating a new battleship...");
+
+            Game.DEBUG.info("Generating random size...");
             int randomSize;
             if (size >= 10) {
                 randomSize = Utils.randomRange(2, 6);
@@ -45,6 +57,8 @@ public class CoordinateMap {
                 randomSize = 2;
             }
 
+            Game.DEBUG.info("Generated random size: " + randomSize);
+
             int randomX = Utils.randomRange(0, size);
             int randomY = Utils.randomRange(0, size);
             boolean horizontal = Utils.randomBoolean();
@@ -54,78 +68,113 @@ public class CoordinateMap {
                 randomY = Utils.randomRange(0, size - randomSize);
             }
 
+            Game.DEBUG.info("The battleship is " + (horizontal ? "horizontal" : "vertical") + "!");
+
             List<Coordinate> coordinates = new ArrayList<>();
             for (int j = horizontal ? randomX : randomY; j - (horizontal ? randomX : randomY) < randomSize; j++) {
-                coordinates.add(new Coordinate(horizontal ? j : randomX, horizontal ? randomY : j));
+                Coordinate coordinate = new Coordinate(horizontal ? j : randomX, horizontal ? randomY : j);
+                coordinates.add(coordinate);
+                Game.DEBUG.info("Added coordinate " + coordinate + " to the battleship.");
             }
+
+            Game.DEBUG.info("Battleship generated!");
 
             Battleship generatedBattleship = new Battleship(coordinates, randomSize);
             boolean discard = coordinates.size() < 2;
             if (!discard) {
+                Game.DEBUG.info("Checking for overlaps...");
                 for (Battleship battleship : battleships) {
                     if (generatedBattleship.isOverlapping(battleship)) {
+                        Game.DEBUG.error("Overlap found!");
                         discard = true;
                         break;
                     }
                 }
+
+                if (!discard) {
+                    Game.DEBUG.info("No overlap found.");
+                }
+            } else {
+                Game.DEBUG.error("The battleship is too small!");
             }
 
             if (discard) {
                 i--;
+                Game.DEBUG.info("Discarding the generated battleship.");
             } else {
                 battleships.add(generatedBattleship);
+                Game.DEBUG.info("Added the battleship!");
             }
         }
 
         for (Battleship battleship : battleships) {
             for (Coordinate coordinate : battleship.getCoordinates()) {
                 setCoordinateStatus(coordinate, CoordinateStatus.Battleship);
+                Game.DEBUG.info("Setting coordinate " + coordinate + " to a battleship.");
 
                 battleshipPieces++;
+                Game.DEBUG.info("Added a battleship piece to the battleship pieces variable.");
             }
         }
+
+        Game.DEBUG.info("Battleships generated!");
     }
 
     public CoordinateStatus update(Coordinate coordinate) {
+        Game.DEBUG.info("Updating coordinate " + coordinate + "...");
         CoordinateStatus coordinateStatus = getCoordinateStatus(coordinate);
         switch (coordinateStatus) {
             case Battleship -> {
                 setCoordinateStatus(coordinate, CoordinateStatus.Hit_Battleship);
+                Game.DEBUG.info("Setting coordinate " + coordinate + " to hit battleship.");
 
                 for (Battleship battleship : battleships) {
                     for (Coordinate battleshipCoordinate: battleship.getCoordinates()) {
                         if (coordinate.isEqualTo(battleshipCoordinate)) {
                             battleship.removePiece();
+                            Game.DEBUG.info("Removed a piece from the battleship.");
                         }
                     }
                 }
 
-                coordinateStatus.setLastBattleshipPiece(checkLastBattleshipPiece(coordinate));
+                boolean lastBattleshipPiece = checkLastBattleshipPiece(coordinate);
+                coordinateStatus.setLastBattleshipPiece(lastBattleshipPiece);
+                if (lastBattleshipPiece) {
+                    Game.DEBUG.info("Setting the result as last battleship piece.");
+                }
 
                 battleshipPieces--;
+                Game.DEBUG.info("Removed a battleship piece from the battleship pieces variable.");
 
                 Info.addAttempt();
             }
             case Water -> {
                 setCoordinateStatus(coordinate, CoordinateStatus.Hit_Water);
+                Game.DEBUG.info("Setting coordinate " + coordinate + " to hit water.");
 
                 Info.addAttempt();
             }
         }
 
+        Game.DEBUG.info("Coordinate " + coordinate + " updated!");
+
         return coordinateStatus;
     }
 
     public boolean checkLastBattleshipPiece(Coordinate coordinate) {
+        Game.DEBUG.info("Checking if the coordinate is last piece of a battleship.");
+        boolean lastPiece = false;
         for (Battleship battleship : battleships) {
             for (Coordinate battleshipCoordinate : battleship.getCoordinates()) {
                 if (coordinate.isEqualTo(battleshipCoordinate) && battleship.isSunk()) {
-                    return true;
+                    lastPiece = true;
+                    break;
                 }
             }
         }
+        Game.DEBUG.info("The coordinate is" + (lastPiece ? " " : " not ") + "a last piece of a battleship.");
 
-        return false;
+        return lastPiece;
     }
 
     public void setCoordinateStatus(Coordinate coordinate, CoordinateStatus coordinateStatus) {

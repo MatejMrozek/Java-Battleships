@@ -13,19 +13,28 @@ public class Info {
 
     private static int attempts = 0;
 
-    public static void reset() {
-        try (Scanner scanner = new Scanner(new File(Objects.requireNonNull(Info.class.getResource("/metadata.json")).getFile()), StandardCharsets.UTF_8.name())) {
-            JSONObject jsonObject = new JSONObject(scanner.useDelimiter("\\A").next());
-            version = jsonObject.getString("version");
-        } catch (IOException exception) {
-            Game.DEBUG.error(exception.getMessage());
+    public static void reset(boolean resetAttempts) {
+        if (version.equalsIgnoreCase("unknown")) {
+            Game.DEBUG.info("Trying to load game version...");
+            try (Scanner scanner = new Scanner(new File(Objects.requireNonNull(Info.class.getResource("/metadata.json")).getFile()), StandardCharsets.UTF_8.name())) {
+                JSONObject jsonObject = new JSONObject(scanner.useDelimiter("\\A").next());
+                version = jsonObject.getString("version");
+
+                Game.DEBUG.info("Game version loaded! You are playing Battleships v" + version + ".");
+            } catch (IOException exception) {
+                Game.DEBUG.error("Could not load Battleships version: " + exception.getMessage());
+            }
         }
 
-        attempts = 0;
+        if (resetAttempts) {
+            attempts = 0;
+            Game.DEBUG.info("Set attempts to 0.");
+        }
     }
 
     public static void addAttempt() {
         attempts++;
+        Game.DEBUG.info("Added one attempt.");
     }
 
     public static int getAttempts() {

@@ -17,11 +17,13 @@ public class Debug {
     }
 
     public void createDebugWindow(String title) {
-        this.debugWindow = new DebugWindow(this, title);
+        if (enabled) {
+            debugWindow = new DebugWindow(this, title);
+        }
     }
 
-    public DebugWindow getDebugWindow() {
-        return debugWindow;
+    public void destroyWindow() {
+        debugWindow = null;
     }
 
     public List<String> getLog() {

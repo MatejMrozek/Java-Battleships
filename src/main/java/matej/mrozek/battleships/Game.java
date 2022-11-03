@@ -1,7 +1,6 @@
 package matej.mrozek.battleships;
 
 import matej.mrozek.battleships.gui.Button;
-import matej.mrozek.battleships.gui.DebugWindow;
 import matej.mrozek.battleships.gui.GameWindow;
 
 import javax.swing.*;
@@ -14,14 +13,14 @@ public class Game {
     public static Debug DEBUG;
 
     public static void main(String[] args) {
-        Info.reset();
-
         DEBUG = new Debug(args.length > 0 && (args[0].equals("debug=true") || args[0].equals("--debug")));
         DEBUG.info("DEBUG ENABLED!");
 
-        DEBUG.info("Creating window...");
-        gameWindow = new GameWindow("Battleships v" + Info.version);
-        DEBUG.info("Window created!");
+        Info.reset(false);
+
+        DEBUG.info("Creating game window...");
+        gameWindow = new GameWindow(DEBUG, "Battleships v" + Info.version);
+        DEBUG.info("Game window created!");
 
         DEBUG.info("Creating DEBUG window...");
         DEBUG.createDebugWindow("[DEBUG] Battleships v" + Info.version);
@@ -33,12 +32,17 @@ public class Game {
     public static void start() {
         DEBUG.info("Starting a new game...");
 
-        Info.reset();
+        Info.reset(true);
 
         gameWindow.clear();
+        DEBUG.info("Cleared game window!");
 
+        DEBUG.info("Asking for map size.");
         int mapSize = askForMapSize();
+
+        DEBUG.info("Setting the map size.");
         COORDINATE_MAP.setSize(mapSize);
+
         COORDINATE_MAP.generate();
 
         gameWindow.loadMap(COORDINATE_MAP);
@@ -50,22 +54,36 @@ public class Game {
         CoordinateMap.CoordinateStatus coordinateStatus = COORDINATE_MAP.update(coordinate);
         button.setText(getCoordinateText(coordinate));
         switch (coordinateStatus) {
-            case Water -> gameWindow.showMessage("Water Hit", "You have hit water!", JOptionPane.INFORMATION_MESSAGE);
-            case Hit_Water -> gameWindow.showMessage("Water Already Hit", "You have already hit that water!", JOptionPane.ERROR_MESSAGE);
-            case Battleship -> gameWindow.showMessage("Battleship Hit", "You have hit a battleship!", JOptionPane.INFORMATION_MESSAGE);
-            case Hit_Battleship -> gameWindow.showMessage("Battleship Piece Already Hit", "You have already hit that battleship piece!", JOptionPane.ERROR_MESSAGE);
+            case Water -> {
+                DEBUG.info("Water hit.");
+                gameWindow.showMessage("Water Hit", "You hit the water!", JOptionPane.INFORMATION_MESSAGE);
+            }
+            case Hit_Water -> {
+                DEBUG.info("Water already hit");
+                gameWindow.showMessage("Water Already Hit", "You have already hit that water!", JOptionPane.ERROR_MESSAGE);
+            }
+            case Battleship -> {
+                DEBUG.info("Battleship hit.");
+                gameWindow.showMessage("Battleship Hit", "You have hit a battleship!", JOptionPane.INFORMATION_MESSAGE);
+            }
+            case Hit_Battleship -> {
+                DEBUG.info("Battleship piece already hit.");
+                gameWindow.showMessage("Battleship Piece Already Hit", "You have already hit that battleship piece!", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         if (coordinateStatus.isLastBattleshipPiece()) {
+            DEBUG.info("A battleship has been sunk.");
             gameWindow.showMessage("Battleship Sunk", "You have sunk a battleship!", JOptionPane.INFORMATION_MESSAGE);
         }
 
         if (COORDINATE_MAP.getBattleshipPieces() <= 0) {
+            DEBUG.info("The game has ended!");
             gameWindow.showMessage("Win", "You have sunk all the battleships!\nIt took you " + Info.getAttempts() + " attempts!", JOptionPane.INFORMATION_MESSAGE);
 
-            Info.reset();
-
             if (askForRestart()) {
+                DEBUG.info("Restarting the game.");
+
                 start();
             } else {
                 int code = 0;
@@ -90,12 +108,14 @@ public class Game {
             }
 
             try {
+                DEBUG.info("Parsing int from input value...");
                 mapSize = Integer.parseInt(mapSizeInput);
                 if (mapSize >= 3 && mapSize <= 25) {
+                    DEBUG.info("Input value parsed as int!");
                     break;
                 }
             } catch (Exception exception) {
-                DEBUG.error(exception.getMessage());
+                DEBUG.error("Failed to parse input: " + exception.getMessage());
             }
 
             gameWindow.showMessage("Invalid Input", "Invalid input value!\nTry again!", JOptionPane.ERROR_MESSAGE);

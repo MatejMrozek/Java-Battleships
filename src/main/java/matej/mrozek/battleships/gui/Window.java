@@ -1,18 +1,13 @@
 package matej.mrozek.battleships.gui;
 
-import matej.mrozek.battleships.Coordinate;
-import matej.mrozek.battleships.CoordinateMap;
 import matej.mrozek.battleships.Debug;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.*;
 import java.util.Objects;
 
-public class Window extends JFrame implements ComponentListener {
+public class Window extends JFrame implements ComponentListener, WindowListener {
     public Debug DEBUG;
 
     public JPanel panel;
@@ -23,6 +18,7 @@ public class Window extends JFrame implements ComponentListener {
         init(debug, title);
 
         addComponentListener(this);
+        addWindowListener(this);
     }
 
     public void init(Debug debug, String title, int closeOperation) {
@@ -44,40 +40,6 @@ public class Window extends JFrame implements ComponentListener {
         setVisible(true);
     }
 
-    public void loadMap(CoordinateMap coordinateMap) {
-        List<Component> components = new ArrayList<>();
-        int mapSize = coordinateMap.getSize();
-        int gap = 5;
-        int componentSize = gap * gap;
-        for (int x = 0; x < mapSize; x++) {
-            int topTextX = gap + (x + 1) * componentSize + (x + 1) * gap;
-            Text topText = new Text(String.valueOf(x + 1), topTextX, gap, componentSize, componentSize);
-            components.add(topText);
-
-            for (int y = 0; y < mapSize; y++) {
-                int leftTextY = gap + (y + 1) * componentSize + (y + 1) * gap;
-                Text leftText = new Text(String.valueOf(y + 1), gap, leftTextY, componentSize, componentSize);
-                components.add(leftText);
-
-                int buttonX = (gap * 2 + componentSize) + x * componentSize + x * gap;
-                int buttonY = (gap * 2 + componentSize) + y * componentSize + y * gap;
-                Button button = new Button(new Coordinate(x, y), buttonX, buttonY, componentSize, componentSize);
-                components.add(button);
-            }
-        }
-
-        for (Component component : components) {
-            addComponent(component);
-        }
-
-        int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);
-        int width = size + 17;
-        int height = size + 40;
-        pack();
-        setSize(width, height);
-        setLocation(screen.width / 2 - width / 2, screen.height / 2 - height / 2);
-    }
-
     public void showMessage(String title, String text, int messageType) {
         JOptionPane.showMessageDialog(this, text, title, messageType, null);
     }
@@ -95,18 +57,10 @@ public class Window extends JFrame implements ComponentListener {
         return (String) JOptionPane.showInputDialog(this, text, title, JOptionPane.QUESTION_MESSAGE, null, null, null);
     }
 
-    public void addComponent(Component component, boolean clearPanel) {
-        if (clearPanel) {
-            panel = new JPanel();
-        }
-
+    public void addComponent(Component component) {
         panel.add(component);
         setContentPane(panel);
         setVisible(true);
-    }
-
-    public void addComponent(Component component) {
-        addComponent(component, false);
     }
 
     @Override
@@ -120,6 +74,27 @@ public class Window extends JFrame implements ComponentListener {
 
     @Override
     public void componentHidden(ComponentEvent event) {}
+
+    @Override
+    public void windowOpened(WindowEvent event) {}
+
+    @Override
+    public void windowClosing(WindowEvent event) {}
+
+    @Override
+    public void windowClosed(WindowEvent event) {}
+
+    @Override
+    public void windowIconified(WindowEvent event) {}
+
+    @Override
+    public void windowDeiconified(WindowEvent event) {}
+
+    @Override
+    public void windowActivated(WindowEvent event) {}
+
+    @Override
+    public void windowDeactivated(WindowEvent event) {}
 
     public enum OptionPaneButton {
         Yes,

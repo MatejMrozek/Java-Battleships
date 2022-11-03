@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameWindow extends Window {
-    public GameWindow(String title) {
-        super(null, title);
+    public GameWindow(Debug debug, String title) {
+        super(debug, title);
     }
 
     @Override
     public void init(Debug debug, String title) {
-        super.init(null, title);
+        super.init(debug, title);
 
         setResizable(false);
         clear();
@@ -30,6 +30,8 @@ public class GameWindow extends Window {
     }
 
     public void loadMap(CoordinateMap coordinateMap) {
+        DEBUG.info("Loading map to the game window.");
+
         List<Component> components = new ArrayList<>();
         int mapSize = coordinateMap.getSize();
         int gap = 5;
@@ -38,21 +40,26 @@ public class GameWindow extends Window {
             int topTextX = gap + (x + 1) * componentSize + (x + 1) * gap;
             Text topText = new Text(String.valueOf(x + 1), topTextX, gap, componentSize, componentSize);
             components.add(topText);
+            DEBUG.info("Added text to components list with size " + componentSize + " and position " + new Coordinate(topTextX, gap) + "!");
 
             for (int y = 0; y < mapSize; y++) {
                 int leftTextY = gap + (y + 1) * componentSize + (y + 1) * gap;
                 Text leftText = new Text(String.valueOf(y + 1), gap, leftTextY, componentSize, componentSize);
                 components.add(leftText);
+                DEBUG.info("Added text to components list with size " + componentSize + " and position " + new Coordinate(gap, leftTextY) + "!");
 
                 int buttonX = (gap * 2 + componentSize) + x * componentSize + x * gap;
                 int buttonY = (gap * 2 + componentSize) + y * componentSize + y * gap;
-                Button button = new Button(new Coordinate(x, y), buttonX, buttonY, componentSize, componentSize);
+                Coordinate coordinate = new Coordinate(x, y);
+                Button button = new Button(coordinate, buttonX, buttonY, componentSize, componentSize);
                 components.add(button);
+                DEBUG.info("Added a button with coordinate " + coordinate + " to components list with size " + componentSize + " and position " + new Coordinate(buttonX, buttonY) + "!");
             }
         }
 
         for (Component component : components) {
             addComponent(component);
+            DEBUG.info("Component added.");
         }
 
         int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);
@@ -61,5 +68,7 @@ public class GameWindow extends Window {
         pack();
         setSize(width, height);
         setLocation(screen.width / 2 - width / 2, screen.height / 2 - height / 2);
+
+        DEBUG.info("Map loaded to the game window!");
     }
 }

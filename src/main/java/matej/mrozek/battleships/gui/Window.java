@@ -22,14 +22,13 @@ public class Window extends JFrame {
         this.setTitle(title);
         this.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/icon.png"))).getImage());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.pack();
-        this.setSize(this.screen.width / 2, this.screen.height / 2);
         this.setResizable(false);
-        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
         clear();
     }
 
     public void clear() {
+        this.pack();
+        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
         this.panel = new JPanel(null);
         this.setContentPane(panel);
         this.setVisible(true);
@@ -38,7 +37,6 @@ public class Window extends JFrame {
     public void loadMap(CoordinateMap coordinateMap) {
         List<Component> components = new ArrayList<>();
         int mapSize = coordinateMap.getSize();
-        boolean resize = true;
         int gap = 5;
         int componentSize = gap * gap;
         for (int x = 0; x < mapSize; x++) {
@@ -51,24 +49,21 @@ public class Window extends JFrame {
                 Text leftText = new Text(String.valueOf(y + 1), gap, leftTextY, componentSize, componentSize);
                 components.add(leftText);
 
-                int buttonX = (gap * 7) + x * componentSize + x * gap;
-                int buttonY = (gap * 7) + y * componentSize + y * gap;
+                int buttonX = (gap * 2 + componentSize) + x * componentSize + x * gap;
+                int buttonY = (gap * 2 + componentSize) + y * componentSize + y * gap;
                 Button button = new Button(new Coordinate(x, y), buttonX, buttonY, componentSize, componentSize);
                 components.add(button);
-            }
-
-            if (resize) {
-                resize = false;
-                int size = (gap * 7) + (componentSize * mapSize) + (gap * mapSize);
-                this.pack();
-                this.setSize(size + 17, size + 40);
-                this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
             }
         }
 
         for (Component component : components) {
             addComponent(component);
         }
+
+        int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);
+        this.pack();
+        this.setSize(size + 17, size + 40);
+        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
     }
 
     public void showMessage(String title, String text, int messageType) {

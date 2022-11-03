@@ -1,65 +1,67 @@
 package matej.mrozek.battleships;
 
 import matej.mrozek.battleships.gui.Button;
-import matej.mrozek.battleships.gui.Window;
+import matej.mrozek.battleships.gui.DebugWindow;
+import matej.mrozek.battleships.gui.GameWindow;
 
 import javax.swing.*;
-import java.util.*;
 
 public class Game {
-    private static Window WINDOW;
+    private static GameWindow gameWindow;
 
     private static final CoordinateMap COORDINATE_MAP = new CoordinateMap();
 
-    public static final DebugLog DEBUG_LOG = new DebugLog();
+    public static Debug DEBUG;
 
     public static void main(String[] args) {
-        boolean debug = args.length > 0 && (args[0].equals("debug=true") || args[0].equals("--debug"));
-        DEBUG_LOG.setEnabled(debug);
-        DEBUG_LOG.plain("DEBUG ENABLED");
-
         Info.reset();
 
-        DEBUG_LOG.info("Creating Window...");
-        WINDOW = new Window("Battleships v" + Info.version + (debug ? " [Debug Mode]" : ""));
-        DEBUG_LOG.info("Window created!");
+        DEBUG = new Debug(args.length > 0 && (args[0].equals("debug=true") || args[0].equals("--debug")));
+        DEBUG.info("DEBUG ENABLED!");
+
+        DEBUG.info("Creating window...");
+        gameWindow = new GameWindow("Battleships v" + Info.version);
+        DEBUG.info("Window created!");
+
+        DEBUG.info("Creating DEBUG window...");
+        DEBUG.createDebugWindow("[DEBUG] Battleships v" + Info.version);
+        DEBUG.info("DEBUG window created!");
 
         start();
     }
 
     public static void start() {
-        DEBUG_LOG.info("Starting a new game...");
+        DEBUG.info("Starting a new game...");
 
         Info.reset();
 
-        WINDOW.clear();
+        gameWindow.clear();
 
         int mapSize = askForMapSize();
         COORDINATE_MAP.setSize(mapSize);
         COORDINATE_MAP.generate();
 
-        WINDOW.loadMap(COORDINATE_MAP);
+        gameWindow.loadMap(COORDINATE_MAP);
 
-        DEBUG_LOG.info("Game started!");
+        DEBUG.info("Game started!");
     }
 
     public static void update(Coordinate coordinate, Button button) {
-        List<Object> list = COORDINATE_MAP.update(coordinate);
-        CoordinateMap.CoordinateStatus coordinateStatus = (CoordinateMap.CoordinateStatus) list.get(0);
+        CoordinateMap.CoordinateStatus coordinateStatus = COORDINATE_MAP.update(coordinate);
         button.setText(getCoordinateText(coordinate));
         switch (coordinateStatus) {
-            case Water -> WINDOW.showMessage("Water Hit", "You have hit water!", JOptionPane.INFORMATION_MESSAGE);
-            case Hit_Water -> WINDOW.showMessage("Water Already Hit", "You have already hit that water!", JOptionPane.ERROR_MESSAGE);
-            case Battleship -> WINDOW.showMessage("Battleship Hit", "You have hit a battleship!", JOptionPane.INFORMATION_MESSAGE);
-            case Hit_Battleship -> WINDOW.showMessage("Battleship Piece Already Hit", "You have already hit that battleship piece!", JOptionPane.ERROR_MESSAGE);
+            case Water -> gameWindow.showMessage("Water Hit", "You have hit water!", JOptionPane.INFORMATION_MESSAGE);
+            case Hit_Water -> gameWindow.showMessage("Water Already Hit", "You have already hit that water!", JOptionPane.ERROR_MESSAGE);
+            case Battleship -> gameWindow.showMessage("Battleship Hit", "You have hit a battleship!", JOptionPane.INFORMATION_MESSAGE);
+            case Hit_Battleship -> gameWindow.showMessage("Battleship Piece Already Hit", "You have already hit that battleship piece!", JOptionPane.ERROR_MESSAGE);
         }
 
-        if ((Boolean) list.get(1)) {
-            WINDOW.showMessage("Battleship Sunk", "You have sunk a battleship!", JOptionPane.INFORMATION_MESSAGE);
+        if (coordinateStatus.isLastBattleshipPiece()) {
+            gameWindow.showMessage("Battleship Sunk", "You have sunk a battleship!", JOptionPane.INFORMATION_MESSAGE);
         }
 
         if (COORDINATE_MAP.getBattleshipPieces() <= 0) {
-            WINDOW.showMessage("Win", "You have sunk all the battleships!\nIt took you " + Info.getAttempts() + " attempts!", JOptionPane.INFORMATION_MESSAGE);
+            gameWindow.showMessage("Win", "You have sunk all the battleships!\nIt took you " + Info.getAttempts() + " attempts!", JOptionPane.INFORMATION_MESSAGE);
 
             Info.reset();
 
@@ -67,7 +69,7 @@ public class Game {
                 start();
             } else {
                 int code = 0;
-                DEBUG_LOG.info("Exiting with exit code: " + code);
+                DEBUG.info("Exiting with exit code: " + code);
                 System.exit(code);
             }
         }
@@ -80,10 +82,10 @@ public class Game {
     private static int askForMapSize() {
         int mapSize;
         while (true) {
-            String mapSizeInput = WINDOW.showInput("Map Size Selection", "How many lines and columns should the map have?\n\nHigher and equal to 3 and lower or equal to 25.");
+            String mapSizeInput = gameWindow.showInput("Map Size Selection", "How many lines and columns should the map have?\n\nHigher and equal to 3 and lower or equal to 25.");
             if (mapSizeInput == null) {
                 int code = 0;
-                DEBUG_LOG.info("Exiting with exit code: " + code);
+                DEBUG.info("Exiting with exit code: " + code);
                 System.exit(code);
             }
 
@@ -93,23 +95,23 @@ public class Game {
                     break;
                 }
             } catch (Exception exception) {
-                DEBUG_LOG.error(exception.getMessage());
+                DEBUG.error(exception.getMessage());
             }
 
-            WINDOW.showMessage("Invalid Input", "Invalid input value!\nTry again!", JOptionPane.ERROR_MESSAGE);
+            gameWindow.showMessage("Invalid Input", "Invalid input value!\nTry again!", JOptionPane.ERROR_MESSAGE);
         }
 
         return mapSize;
     }
 
     private static boolean askForRestart() {
-        Window.OptionPaneButton restartInput = WINDOW.showYesNoInput("Restart", "Do you want to play again?");
-        if (restartInput == Window.OptionPaneButton.Cancel) {
+        GameWindow.OptionPaneButton restartInput = gameWindow.showYesNoInput("Restart", "Do you want to play again?");
+        if (restartInput == GameWindow.OptionPaneButton.Cancel) {
             int code = 0;
-            DEBUG_LOG.info("Exiting with exit code: " + code);
+            DEBUG.info("Exiting with exit code: " + code);
             System.exit(code);
         }
 
-        return restartInput == Window.OptionPaneButton.Yes;
+        return restartInput == GameWindow.OptionPaneButton.Yes;
     }
 }

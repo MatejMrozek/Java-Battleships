@@ -14,11 +14,11 @@ public class CoordinateMap {
     }
 
     public int getSize() {
-        return this.size;
+        return size;
     }
 
     public int getBattleshipPieces() {
-        return this.battleshipPieces;
+        return battleshipPieces;
     }
 
     public void generate() {
@@ -47,22 +47,19 @@ public class CoordinateMap {
 
             int randomX = Utils.randomRange(0, size);
             int randomY = Utils.randomRange(0, size);
-            Battleship.Orientation randomOrientation;
-            if (Utils.randomBoolean()) {
-                randomOrientation = Battleship.Orientation.Horizontal;
+            boolean horizontal = Utils.randomBoolean();
+            if (horizontal) {
                 randomX = Utils.randomRange(0, size - randomSize);
             } else {
-                randomOrientation = Battleship.Orientation.Vertical;
                 randomY = Utils.randomRange(0, size - randomSize);
             }
 
             List<Coordinate> coordinates = new ArrayList<>();
-            boolean horizontalOrientation = randomOrientation == Battleship.Orientation.Horizontal;
-            for (int j = horizontalOrientation ? randomX : randomY; j - (horizontalOrientation ? randomX : randomY) < randomSize; j++) {
-                coordinates.add(new Coordinate(horizontalOrientation ? j : randomX, horizontalOrientation ? randomY : j));
+            for (int j = horizontal ? randomX : randomY; j - (horizontal ? randomX : randomY) < randomSize; j++) {
+                coordinates.add(new Coordinate(horizontal ? j : randomX, horizontal ? randomY : j));
             }
 
-            Battleship generatedBattleship = new Battleship(coordinates, randomSize, randomOrientation);
+            Battleship generatedBattleship = new Battleship(coordinates, randomSize);
             boolean discard = coordinates.size() < 2;
             if (!discard) {
                 for (Battleship battleship : battleships) {
@@ -81,7 +78,7 @@ public class CoordinateMap {
         }
 
         for (Battleship battleship : battleships) {
-            for (Coordinate coordinate : battleship.coordinates) {
+            for (Coordinate coordinate : battleship.getCoordinates()) {
                 setCoordinateStatus(coordinate, CoordinateStatus.Battleship);
 
                 battleshipPieces++;
@@ -89,24 +86,21 @@ public class CoordinateMap {
         }
     }
 
-    public List<Object> update(Coordinate coordinate) {
-        List<Object> list = new ArrayList<>();
+    public CoordinateStatus update(Coordinate coordinate) {
         CoordinateStatus coordinateStatus = getCoordinateStatus(coordinate);
-        list.add(coordinateStatus);
-        list.add(false);
         switch (coordinateStatus) {
             case Battleship -> {
                 setCoordinateStatus(coordinate, CoordinateStatus.Hit_Battleship);
 
                 for (Battleship battleship : battleships) {
-                    for (Coordinate battleshipCoordinate: battleship.coordinates) {
+                    for (Coordinate battleshipCoordinate: battleship.getCoordinates()) {
                         if (coordinate.isEqualTo(battleshipCoordinate)) {
-                            battleship.piecesLeft--;
+                            battleship.removePiece();
                         }
                     }
                 }
 
-                list.set(1, checkLastBattleshipPiece(coordinate));
+                coordinateStatus.setLastBattleshipPiece(checkLastBattleshipPiece(coordinate));
 
                 battleshipPieces--;
 
@@ -119,13 +113,13 @@ public class CoordinateMap {
             }
         }
 
-        return list;
+        return coordinateStatus;
     }
 
     public boolean checkLastBattleshipPiece(Coordinate coordinate) {
         for (Battleship battleship : battleships) {
-            for (Coordinate battleshipCoordinate : battleship.coordinates) {
-                if (coordinate.isEqualTo(battleshipCoordinate) && battleship.piecesLeft == 0) {
+            for (Coordinate battleshipCoordinate : battleship.getCoordinates()) {
+                if (coordinate.isEqualTo(battleshipCoordinate) && battleship.isSunk()) {
                     return true;
                 }
             }
@@ -135,11 +129,11 @@ public class CoordinateMap {
     }
 
     public void setCoordinateStatus(Coordinate coordinate, CoordinateStatus coordinateStatus) {
-        map[coordinate.x][coordinate.y] = coordinateStatus;
+        map[coordinate.x()][coordinate.y()] = coordinateStatus;
     }
 
     public CoordinateStatus getCoordinateStatus(Coordinate coordinate) {
-        return map[coordinate.x][coordinate.y];
+        return map[coordinate.x()][coordinate.y()];
     }
 
     public enum CoordinateStatus {
@@ -150,8 +144,18 @@ public class CoordinateMap {
 
         private final char character;
 
+        private boolean lastBattleshipPiece = false;
+
         CoordinateStatus(char character) {
             this.character = character;
+        }
+
+        public boolean isLastBattleshipPiece() {
+            return lastBattleshipPiece;
+        }
+
+        public void setLastBattleshipPiece(boolean lastBattleshipPiece) {
+            this.lastBattleshipPiece = lastBattleshipPiece;
         }
 
         @Override

@@ -18,7 +18,7 @@ public class Info {
             JSONObject jsonObject = new JSONObject(scanner.useDelimiter("\\A").next());
             version = jsonObject.getString("version");
         } catch (IOException exception) {
-            Game.DEBUG_LOG.error(exception.getMessage());
+            Game.DEBUG.error(exception.getMessage());
         }
 
         attempts = 0;

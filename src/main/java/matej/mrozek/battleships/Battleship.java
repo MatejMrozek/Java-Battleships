@@ -3,17 +3,25 @@ package matej.mrozek.battleships;
 import java.util.List;
 
 public class Battleship {
-    final List<Coordinate> coordinates;
-    final int size;
-    int piecesLeft;
+    private final List<Coordinate> coordinates;
 
-    final Orientation orientation;
+    private int pieces;
 
-    Battleship(List<Coordinate> coordinates, int size, Orientation orientation) {
+    Battleship(List<Coordinate> coordinates, int size) {
         this.coordinates = coordinates;
-        this.size = size;
-        this.piecesLeft = size;
-        this.orientation = orientation;
+        this.pieces = size;
+    }
+
+    public List<Coordinate> getCoordinates() {
+        return coordinates;
+    }
+
+    public void removePiece() {
+        pieces--;
+    }
+
+    public boolean isSunk() {
+        return pieces == 0;
     }
 
     public boolean isOverlapping(Battleship battleship) {
@@ -26,10 +34,5 @@ public class Battleship {
         }
 
         return false;
-    }
-
-    enum Orientation {
-        Horizontal,
-        Vertical
     }
 }

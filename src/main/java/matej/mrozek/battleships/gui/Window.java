@@ -2,36 +2,46 @@ package matej.mrozek.battleships.gui;
 
 import matej.mrozek.battleships.Coordinate;
 import matej.mrozek.battleships.CoordinateMap;
+import matej.mrozek.battleships.Debug;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Window extends JFrame {
-    private JPanel panel = new JPanel(null);
+public class Window extends JFrame implements ComponentListener {
+    public Debug DEBUG;
 
-    private final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    public JPanel panel;
 
-    public Window(String title) {
-        init(title);
+    public final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    public Window(Debug debug, String title) {
+        init(debug, title);
+
+        addComponentListener(this);
     }
 
-    private void init(String title) {
-        this.setTitle(title);
-        this.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/icon.png"))).getImage());
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(false);
+    public void init(Debug debug, String title, int closeOperation) {
+        this.DEBUG = debug;
+
+        setTitle(title);
+        setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/icon.png"))).getImage());
+        setDefaultCloseOperation(closeOperation);
         clear();
     }
 
+    public void init(Debug debug, String title) {
+        init(debug, title, JFrame.EXIT_ON_CLOSE);
+    }
+
     public void clear() {
-        this.pack();
-        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
-        this.panel = new JPanel(null);
-        this.setContentPane(panel);
-        this.setVisible(true);
+        panel = new JPanel(null);
+        setContentPane(panel);
+        setVisible(true);
     }
 
     public void loadMap(CoordinateMap coordinateMap) {
@@ -61,9 +71,11 @@ public class Window extends JFrame {
         }
 
         int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);
-        this.pack();
-        this.setSize(size + 17, size + 40);
-        this.setLocation(screen.width / 2 - getWidth() / 2, screen.height / 2 - getHeight() / 2);
+        int width = size + 17;
+        int height = size + 40;
+        pack();
+        setSize(width, height);
+        setLocation(screen.width / 2 - width / 2, screen.height / 2 - height / 2);
     }
 
     public void showMessage(String title, String text, int messageType) {
@@ -83,11 +95,31 @@ public class Window extends JFrame {
         return (String) JOptionPane.showInputDialog(this, text, title, JOptionPane.QUESTION_MESSAGE, null, null, null);
     }
 
-    private void addComponent(Component component) {
-        this.panel.add(component);
-        this.setContentPane(this.panel);
-        this.setVisible(true);
+    public void addComponent(Component component, boolean clearPanel) {
+        if (clearPanel) {
+            panel = new JPanel();
+        }
+
+        panel.add(component);
+        setContentPane(panel);
+        setVisible(true);
     }
+
+    public void addComponent(Component component) {
+        addComponent(component, false);
+    }
+
+    @Override
+    public void componentResized(ComponentEvent event) {}
+
+    @Override
+    public void componentMoved(ComponentEvent event) {}
+
+    @Override
+    public void componentShown(ComponentEvent event) {}
+
+    @Override
+    public void componentHidden(ComponentEvent event) {}
 
     public enum OptionPaneButton {
         Yes,

@@ -26,7 +26,7 @@ jar {
     from "LICENSE"
 
     manifest {
-        attributes("Main-Class": project.maven_group + ".battleships.Main")
+        attributes("Main-Class": project.maven_group + ".battleships.Game")
     }
 }
 

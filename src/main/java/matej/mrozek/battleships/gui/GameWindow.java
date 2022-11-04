@@ -32,34 +32,28 @@ public class GameWindow extends Window {
     public void loadMap(CoordinateMap coordinateMap) {
         DEBUG.info("Loading map to the game window.");
 
-        List<Component> components = new ArrayList<>();
         int mapSize = coordinateMap.getSize();
         int gap = 5;
         int componentSize = gap * gap;
         for (int x = 0; x < mapSize; x++) {
             int topTextX = gap + (x + 1) * componentSize + (x + 1) * gap;
             Text topText = new Text(String.valueOf(x + 1), topTextX, gap, componentSize, componentSize);
-            components.add(topText);
-            DEBUG.info("Added text to components list with size " + componentSize + " and position " + new Coordinate(topTextX, gap) + "!");
+            addComponent(topText);
+            DEBUG.info("Added text with size " + componentSize + " and position " + new Coordinate(topTextX, gap) + "!");
 
             for (int y = 0; y < mapSize; y++) {
                 int leftTextY = gap + (y + 1) * componentSize + (y + 1) * gap;
                 Text leftText = new Text(String.valueOf(y + 1), gap, leftTextY, componentSize, componentSize);
-                components.add(leftText);
-                DEBUG.info("Added text to components list with size " + componentSize + " and position " + new Coordinate(gap, leftTextY) + "!");
+                addComponent(leftText);
+                DEBUG.info("Added text with size " + componentSize + " and position " + new Coordinate(gap, leftTextY) + "!");
 
                 int buttonX = (gap * 2 + componentSize) + x * componentSize + x * gap;
                 int buttonY = (gap * 2 + componentSize) + y * componentSize + y * gap;
                 Coordinate coordinate = new Coordinate(x, y);
                 Button button = new Button(coordinate, buttonX, buttonY, componentSize, componentSize);
-                components.add(button);
-                DEBUG.info("Added a button with coordinate " + coordinate + " to components list with size " + componentSize + " and position " + new Coordinate(buttonX, buttonY) + "!");
+                addComponent(button);
+                DEBUG.info("Added a button with coordinate " + coordinate + ", size " + componentSize + " and position " + new Coordinate(buttonX, buttonY) + "!");
             }
-        }
-
-        for (Component component : components) {
-            addComponent(component);
-            DEBUG.info("Component " + component.getName() + " on position " + new Coordinate(component.getX(), component.getY()) + " added.");
         }
 
         int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);

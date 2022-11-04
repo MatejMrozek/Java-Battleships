@@ -112,7 +112,7 @@ public class Game {
                 DEBUG.info("Parsing int from input value.");
                 mapSize = Integer.parseInt(mapSizeInput);
                 if (mapSize >= 5 && mapSize <= 25) {
-                    DEBUG.error("Input value parsed as int!");
+                    DEBUG.info("Input value parsed as int!");
                     break;
                 }
             } catch (Exception exception) {

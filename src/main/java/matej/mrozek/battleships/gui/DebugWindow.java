@@ -37,6 +37,7 @@ public class DebugWindow extends Window {
         }
 
         scrollableText.updateText(logBuilder.toString());
+        scrollableText.setBounds(1, 1, getWidth() - 17, getHeight() - 40);
 
         clear();
         addComponent(scrollableText);

@@ -1,7 +1,5 @@
 package matej.mrozek.battleships;
 
-import com.sun.tools.javac.Main;
-
 import java.util.*;
 
 public class CoordinateMap {

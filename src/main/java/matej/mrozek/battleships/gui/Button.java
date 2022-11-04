@@ -21,6 +21,11 @@ public class Button extends JButton implements ActionListener {
     }
 
     @Override
+    public String getName() {
+        return "Button";
+    }
+
+    @Override
     public void actionPerformed(ActionEvent event) {
         if (coordinate != null) {
             Game.update(coordinate, this);

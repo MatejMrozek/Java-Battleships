@@ -11,4 +11,9 @@ public class Text extends JTextField {
         setBounds(x, y, width, height);
         setMargin(new Insets(0, 0, 0, 0));
     }
+
+    @Override
+    public String getName() {
+        return "Text";
+    }
 }

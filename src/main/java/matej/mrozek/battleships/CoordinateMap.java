@@ -120,6 +120,7 @@ public class CoordinateMap {
 
     public CoordinateStatus update(Coordinate coordinate) {
         Game.DEBUG.info("Updating coordinate " + coordinate + "...");
+
         CoordinateStatus coordinateStatus = getCoordinateStatus(coordinate);
         switch (coordinateStatus) {
             case Battleship -> {
@@ -161,6 +162,7 @@ public class CoordinateMap {
 
     public boolean checkLastBattleshipPiece(Coordinate coordinate) {
         Game.DEBUG.info("Checking if the coordinate is last piece of a battleship.");
+
         boolean lastPiece = false;
         for (Battleship battleship : battleships) {
             for (Coordinate battleshipCoordinate : battleship.getCoordinates()) {
@@ -170,6 +172,7 @@ public class CoordinateMap {
                 }
             }
         }
+
         Game.DEBUG.info("The coordinate is" + (lastPiece ? " " : " not ") + "a last piece of a battleship.");
 
         return lastPiece;

@@ -18,6 +18,7 @@ public class Battleship {
 
     public void removePiece() {
         pieces--;
+        
         Game.DEBUG.info("Battleship piece removed.");
     }
 
@@ -27,6 +28,7 @@ public class Battleship {
 
     public boolean isOverlapping(Battleship battleship) {
         Game.DEBUG.info("Checking for an overlap.");
+
         boolean overlap = false;
         for (Coordinate coordinate : coordinates) {
             for (Coordinate battleshipCoordinate : battleship.coordinates) {

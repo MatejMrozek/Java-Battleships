@@ -59,7 +59,7 @@ public class GameWindow extends Window {
 
         for (Component component : components) {
             addComponent(component);
-            DEBUG.info("Component added.");
+            DEBUG.info("Component " + component.getName() + " on position " + new Coordinate(component.getX(), component.getY()) + " added.");
         }
 
         int size = (gap * 2 + componentSize) + (componentSize * mapSize) + (gap * mapSize);

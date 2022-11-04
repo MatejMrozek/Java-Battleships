@@ -37,7 +37,6 @@ public class Game {
         gameWindow.clear();
         DEBUG.info("Cleared game window!");
 
-        DEBUG.info("Asking for map size.");
         int mapSize = askForMapSize();
 
         DEBUG.info("Setting the map size.");
@@ -98,6 +97,8 @@ public class Game {
     }
 
     private static int askForMapSize() {
+        DEBUG.info("Asking for map size.");
+
         int mapSize;
         while (true) {
             String mapSizeInput = gameWindow.showInput("Map Size Selection", "How many lines and columns should the map have?\n\nHigher and equal to 5 and lower or equal to 25.");
@@ -108,10 +109,10 @@ public class Game {
             }
 
             try {
-                DEBUG.info("Parsing int from input value...");
+                DEBUG.info("Parsing int from input value.");
                 mapSize = Integer.parseInt(mapSizeInput);
                 if (mapSize >= 5 && mapSize <= 25) {
-                    DEBUG.info("Input value parsed as int!");
+                    DEBUG.error("Input value parsed as int!");
                     break;
                 }
             } catch (Exception exception) {
@@ -125,6 +126,7 @@ public class Game {
     }
 
     private static boolean askForRestart() {
+        DEBUG.info("Asking for restart.");
         GameWindow.OptionPaneButton restartInput = gameWindow.showYesNoInput("Restart", "Do you want to play again?");
         if (restartInput == GameWindow.OptionPaneButton.Cancel) {
             int code = 0;

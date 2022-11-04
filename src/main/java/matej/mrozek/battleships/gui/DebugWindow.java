@@ -9,6 +9,8 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class DebugWindow extends Window {
+    private ScrollableText scrollableText;
+
     public DebugWindow(Debug debug, String title) {
         super(debug, title);
     }
@@ -19,6 +21,8 @@ public class DebugWindow extends Window {
 
         pack();
         setSize(new Dimension(screen.width / 3, screen.height / 3));
+        setLocation(0, 0);
+        scrollableText = new ScrollableText(null, 1, 1, getWidth() - 17, getHeight() - 40);
 
         update();
     }
@@ -32,15 +36,10 @@ public class DebugWindow extends Window {
             }
         }
 
-        JTextArea textArea = new JTextArea();
-        textArea.setText(logBuilder.toString());
-        textArea.setEditable(false);
-
-        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setSize(new Dimension(getWidth() - 17, getHeight() - 40));
+        scrollableText.updateText(logBuilder.toString());
 
         clear();
-        addComponent(scrollPane);
+        addComponent(scrollableText);
         setVisible(true);
     }
 

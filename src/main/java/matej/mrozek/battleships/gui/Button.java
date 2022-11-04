@@ -22,7 +22,9 @@ public class Button extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        Game.update(coordinate, this);
-        Game.DEBUG.info("Updated coordinate " + coordinate + " because button on " + new Coordinate(getX(), getY()) + " got clicked.");
+        if (coordinate != null) {
+            Game.update(coordinate, this);
+            Game.DEBUG.info("Updated coordinate " + coordinate + " because button on " + new Coordinate(getX(), getY()) + " got clicked.");
+        }
     }
 }

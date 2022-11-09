@@ -17,8 +17,6 @@ configurations {
 }
 
 dependencies {
-    implementation "org.json:json:${project.json_version}"
-
     extraLibs group: "org.json", name: "json", version: "${project.json_version}"
     configurations.implementation.extendsFrom(configurations.extraLibs)
 }

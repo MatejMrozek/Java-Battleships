@@ -2,11 +2,7 @@ package matej.mrozek.battleships;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.Scanner;
+import java.io.*;
 
 public class Info {
     public static String version = "Unknown";
@@ -15,14 +11,40 @@ public class Info {
 
     public static void reset(boolean resetAttempts) {
         if (version.equalsIgnoreCase("unknown")) {
-            Game.DEBUG.info("Trying to load game version...");
-            try (Scanner scanner = new Scanner(new File(Objects.requireNonNull(Info.class.getResource("/metadata.json")).getFile()), StandardCharsets.UTF_8.name())) {
-                JSONObject jsonObject = new JSONObject(scanner.useDelimiter("\\A").next());
+            boolean failed = false;
+            String bonusInfo = "Unknown";
+            try {
+                Game.DEBUG.info("Trying to load game version...");
+                InputStream inputStream = Info.class.getResourceAsStream("/metadata.json");
+                if (inputStream == null) {
+                    failed = true;
+                    bonusInfo = "InputStream from /metadata.json is null.";
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder rawJson = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    rawJson.append(line).append("\n");
+                }
+
+                bufferedReader.close();
+                inputStreamReader.close();
+                inputStream.close();
+
+                JSONObject jsonObject = new JSONObject(rawJson.toString());
                 version = jsonObject.getString("version");
 
                 Game.DEBUG.info("Game version loaded! You are playing Battleships v" + version + ".");
             } catch (IOException exception) {
-                Game.DEBUG.error("Could not load Battleships version: " + exception.getMessage());
+                failed = true;
+                bonusInfo = exception.getMessage();
+            }
+
+            if (failed) {
+                Game.DEBUG.error("Could not load Battleships version: " + bonusInfo);
             }
         }
 

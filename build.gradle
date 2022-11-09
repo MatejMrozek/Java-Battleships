@@ -12,8 +12,15 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    extraLibs
+}
+
 dependencies {
     implementation "org.json:json:${project.json_version}"
+
+    extraLibs group: "org.json", name: "json", version: "${project.json_version}"
+    configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
 processResources {
@@ -23,7 +30,13 @@ processResources {
 }
 
 jar {
-    from "LICENSE"
+    from {
+        "LICENSE"
+
+        configurations.extraLibs.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 
     manifest {
         attributes("Main-Class": project.maven_group + ".battleships.Game")

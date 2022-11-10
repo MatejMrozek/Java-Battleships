@@ -12,7 +12,7 @@
 </p>
 
 <div align="center">
-    <a href="https://github.com/MatejMrozek/Java-Battleships"><img src="https://img.shields.io/github/last-commit/MatejMrozek/Java-Battleships" alt="GitHub last commit"</a>
+    <a href="https://github.com/MatejMrozek/Java-Battleships"><img src="https://img.shields.io/github/last-commit/MatejMrozek/Java-Battleships" alt="GitHub last commit"></a>
     <a href="https://github.com/MatejMrozek/Java-Battleships"><img src="https://img.shields.io/github/commit-activity/w/MatejMrozek/Java-Battleships" alt="GitHub commit activity"></a>
     <br>
     <a href="https://github.com/MatejMrozek/Java-Battleships"><img src="https://img.shields.io/github/languages/code-size/MatejMrozek/Java-Battleships" alt="GitHub code size in bytes"></a>
